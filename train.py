@@ -1067,6 +1067,7 @@ if __name__ == "__main__":
         json.dump(hparams.values(), f, indent=2)
 
     # Dataloader setup
+    print(dump_root)
     data_loaders = get_data_loaders(dump_root, speaker_id, test_shuffle=True)
 
     maybe_set_epochs_based_on_max_steps(hparams, len(data_loaders["train_no_dev"]))

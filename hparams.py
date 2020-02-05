@@ -18,7 +18,7 @@ hparams = HParams(
     # **NOTE**: if you change the one of the two parameters below, you need to
     # re-run preprocessing before training.
     input_type="raw",
-    quantize_channels=65536,  # 65536 or 256
+    quantize_channels=256,  # 65536 or 256
 
     # Audio:
     # time-domain pre/post-processing
@@ -29,7 +29,7 @@ hparams = HParams(
     # waveform domain scaling
     global_gain_scale=1.0,
 
-    sample_rate=22050,
+    sample_rate=16000,
     # this is only valid for mulaw is True
     silence_threshold=2,
     num_mels=80,
@@ -88,7 +88,7 @@ hparams = HParams(
     # Loss
 
     # Training:
-    batch_size=8,
+    batch_size=2,
     optimizer="Adam",
     optimizer_params={
         "lr": 1e-3,
