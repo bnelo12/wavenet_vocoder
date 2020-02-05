@@ -10,6 +10,8 @@ from os.path import exists, basename, splitext
 import librosa
 from glob import glob
 from os.path import join
+import subprocess
+import csv
 
 from wavenet_vocoder.util import is_mulaw_quantize, is_mulaw, is_raw
 
@@ -59,8 +61,32 @@ def _process_song(out_dir, index, wav_path, text):
 
 
     #### CLAIRE Work here
+    # make the chord directory if it does not exist
+    chord_dir = "chord_dir"
+    os.makedirs(chord_dir, exist_ok=True)
+
+    # create xml file with notes and timestamps
+    #subprocess.check_call(['./extract_chord_notes.sh', wav_path, chord_dir], shell=True)
+    os.system('./extract_chord_notes.sh {0} {1}'.format(wav_path, chord_dir))
+
+    wav_name = os.path.splitext(os.path.basename(wav_path))[0]
+    note_filename = '{0}/{1}.csv'.format(chord_dir, wav_name)
+
     #### Instead of computing the Mel Spectrogram, here return a time series of one hot encoded chords.
-    chords_time_series = None
+    # vector with 1 in row for each note played
+    chords_time_series = np.zeros((100, len(wav)))
+    with open(note_filename) as csvfile:
+        #chordreader = csv.reader(csvfile, delimeter=',')
+        chordreader = csvfile.readlines()
+        for row in chordreader:
+            start_time = row[0]
+            end_time = row[1]
+            note = row[2]
+
+            start_sample = start_time * hparams.sample_rate
+            end_sample = end_time * hparams.sample_rate
+
+            chords_time_series[note][start_sample:end_sample]=1
 
     if hparams.global_gain_scale > 0:
         wav *= hparams.global_gain_scale
@@ -102,6 +128,8 @@ def _process_song(out_dir, index, wav_path, text):
             out.astype(out_dtype), allow_pickle=False)
     np.save(os.path.join(out_dir, mel_filename),
             chords_spectrogram.astype(np.float32), allow_pickle=False)
+    np.save(os.path.join(out_dir, chords_filename),
+            chords_time_series.astype(np.int16), allow_pickle=False)
 
     # Return a tuple describing this training example:
     return (audio_filename, chords_filename, N, text)
