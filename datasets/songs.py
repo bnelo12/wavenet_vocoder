@@ -75,18 +75,21 @@ def _process_song(out_dir, index, wav_path, text):
     #### Instead of computing the Mel Spectrogram, here return a time series of one hot encoded chords.
     # vector with 1 in row for each note played
     chords_time_series = np.zeros((100, len(wav)))
+    print(">>>>>>>>>>> Length {0}".format(len(wav)))
     with open(note_filename, newline='\n') as csvfile:
         #chordreader = csv.reader(csvfile, delimeter=',')
         chordreader = csvfile.readlines()
         #print(chordreader)
         for row in chordreader:
             row = row.split(",")
-            start_time = row[0]
-            end_time = row[1]
-            note = row[2]
+            start_time = float(row[0])
+            end_time = float(row[1])
+            note = int(row[2])
+            print("end time {0}".format(end_time))
+            start_sample = int(start_time * hparams.sample_rate)
+            end_sample = int(end_time * hparams.sample_rate)
 
-            start_sample = start_time * hparams.sample_rate
-            end_sample = end_time * hparams.sample_rate
+            print("end timestep {0}".format(end_sample))
 
             chords_time_series[note][start_sample:end_sample]=1
 
