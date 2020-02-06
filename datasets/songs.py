@@ -131,8 +131,6 @@ def _process_song(out_dir, index, wav_path, text):
     chords_filename = '%s-feats.npy' % (name)
     np.save(os.path.join(out_dir, audio_filename),
             out.astype(out_dtype), allow_pickle=False)
-    np.save(os.path.join(out_dir, mel_filename),
-            chords_spectrogram.astype(np.float32), allow_pickle=False)
     np.save(os.path.join(out_dir, chords_filename),
             chords_time_series.astype(np.int16), allow_pickle=False)
 
