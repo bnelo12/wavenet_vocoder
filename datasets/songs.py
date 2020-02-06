@@ -74,8 +74,11 @@ def _process_song(out_dir, index, wav_path, text):
 
     #### Instead of computing the Mel Spectrogram, here return a time series of one hot encoded chords.
     # vector with 1 in row for each note played
-    chords_time_series = np.zeros((100, len(wav)))
-    print(">>>>>>>>>>> Length {0}".format(len(wav)))
+    # 1000 samples per second
+    note_samples = int(len(wav) / hparams.sample_rate * 1000)
+    # 12 notes per octave
+    chords_time_series = np.zeros((12, note_samples))
+
     with open(note_filename, newline='\n') as csvfile:
         #chordreader = csv.reader(csvfile, delimeter=',')
         chordreader = csvfile.readlines()
@@ -84,10 +87,9 @@ def _process_song(out_dir, index, wav_path, text):
             row = row.split(",")
             start_time = float(row[0])
             end_time = float(row[1])
-            note = int(row[2])
-            start_sample = int(start_time * hparams.sample_rate)
-            end_sample = int(end_time * hparams.sample_rate)
-
+            note = int(row[2]) % 12
+            start_sample = int(start_time * 1000)
+            end_sample = min(note_samples, int(end_time * 1000))
             chords_time_series[note][start_sample:end_sample]=1
 
     if hparams.global_gain_scale > 0:
