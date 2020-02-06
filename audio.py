@@ -35,6 +35,7 @@ def load_wav(path):
     if x.dtype == np.int16:
         x = x.astype(np.float32) / signed_int16_max
     if sr != hparams.sample_rate:
+        print(path)
         x = librosa.resample(x, sr, hparams.sample_rate)
     x = np.clip(x, -1.0, 1.0)
     return x
