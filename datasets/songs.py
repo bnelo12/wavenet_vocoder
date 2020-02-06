@@ -85,11 +85,8 @@ def _process_song(out_dir, index, wav_path, text):
             start_time = float(row[0])
             end_time = float(row[1])
             note = int(row[2])
-            print("end time {0}".format(end_time))
             start_sample = int(start_time * hparams.sample_rate)
             end_sample = int(end_time * hparams.sample_rate)
-
-            print("end timestep {0}".format(end_sample))
 
             chords_time_series[note][start_sample:end_sample]=1
 
@@ -131,8 +128,6 @@ def _process_song(out_dir, index, wav_path, text):
     chords_filename = '%s-feats.npy' % (name)
     np.save(os.path.join(out_dir, audio_filename),
             out.astype(out_dtype), allow_pickle=False)
-    np.save(os.path.join(out_dir, mel_filename),
-            chords_spectrogram.astype(np.float32), allow_pickle=False)
     np.save(os.path.join(out_dir, chords_filename),
             chords_time_series.astype(np.int16), allow_pickle=False)
 
