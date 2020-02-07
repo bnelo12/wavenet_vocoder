@@ -61,23 +61,30 @@ def _process_song(out_dir, index, wav_path, text):
 
 
     #### CLAIRE Work here
+    wav_name = os.path.splitext(os.path.basename(wav_path))[0]
+    os.makedirs('./pwavs', exist_ok=True)
+    pwav_path = './pwavs/{0}.wav'.format(wav_name)
+    audio.save_wav(wav, pwav_path)
     # make the chord directory if it does not exist
     chord_dir = "chord_dir"
     os.makedirs(chord_dir, exist_ok=True)
 
     # create xml file with notes and timestamps
     #subprocess.check_call(['./extract_chord_notes.sh', wav_path, chord_dir], shell=True)
-    os.system('./extract_chord_notes.sh {0} {1}'.format(wav_path, chord_dir))
+    #os.system('./extract_chord_notes.sh {0} {1}'.format(pwav_path, chord_dir))
+    os.system('./extract_chord_notes.sh {0} {1} > /dev/null 2>&1'.format(pwav_path, chord_dir))
 
-    wav_name = os.path.splitext(os.path.basename(wav_path))[0]
+
     note_filename = '{0}/{1}.csv'.format(chord_dir, wav_name)
 
     #### Instead of computing the Mel Spectrogram, here return a time series of one hot encoded chords.
     # vector with 1 in row for each note played
     # 1000 samples per second
-    note_samples = int(len(wav) / hparams.sample_rate * 1000)
+    note_samples = int((len(wav) / hparams.sample_rate) * 1000)
     # 12 notes per octave
-    chords_time_series = np.zeros((12, note_samples))
+    chords_time_series = np.zeros((note_samples,12))
+
+    #print(np.shape(chords_time_series))
 
     with open(note_filename, newline='\n') as csvfile:
         #chordreader = csv.reader(csvfile, delimeter=',')
@@ -86,11 +93,18 @@ def _process_song(out_dir, index, wav_path, text):
         for row in chordreader:
             row = row.split(",")
             start_time = float(row[0])
-            end_time = float(row[1])
+            end_time = float(row[1]) + start_time
             note = int(row[2]) % 12
-            start_sample = int(start_time * 1000)
+            start_sample = min(note_samples-1, int(start_time * 1000))
             end_sample = min(note_samples, int(end_time * 1000))
-            chords_time_series[note][start_sample:end_sample]=1
+            try:
+                chords_time_series[start_sample:end_sample][note]=1
+                print('wav {0} start {1} end {2} note {3} num_notes {4}'.format(wav_name, start_sample, end_sample, note, note_samples))
+            except Exception as e:
+                print(np.shape(chords_time_series))
+                print('wav {0} start {1} end {2} note {3} num_notes {4}'.format(wav_name, start_sample, end_sample, note, note_samples))
+
+
 
     if hparams.global_gain_scale > 0:
         wav *= hparams.global_gain_scale

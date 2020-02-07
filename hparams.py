@@ -37,7 +37,7 @@ hparams = HParams(
     fmax=7600,
     fft_size=1024,
     # shift can be specified by either hop_size or frame_shift_ms
-    hop_size=256,
+    hop_size=16,
     frame_shift_ms=None,
     win_length=1024,
     win_length_ms=-1.0,
