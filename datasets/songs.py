@@ -82,7 +82,7 @@ def _process_song(out_dir, index, wav_path, text):
     # 1000 samples per second
     note_samples = int((len(wav) / hparams.sample_rate) * 1000)
     # 12 notes per octave
-    chords_time_series = np.zeros((note_samples,12))
+    chords_time_series = np.zeros((12, note_samples))
 
     #print(np.shape(chords_time_series))
 
@@ -98,13 +98,14 @@ def _process_song(out_dir, index, wav_path, text):
             start_sample = min(note_samples-1, int(start_time * 1000))
             end_sample = min(note_samples, int(end_time * 1000))
             try:
-                chords_time_series[start_sample:end_sample][note]=1
+                chords_time_series[note][start_sample:end_sample]=1
                 print('wav {0} start {1} end {2} note {3} num_notes {4}'.format(wav_name, start_sample, end_sample, note, note_samples))
             except Exception as e:
                 print(np.shape(chords_time_series))
                 print('wav {0} start {1} end {2} note {3} num_notes {4}'.format(wav_name, start_sample, end_sample, note, note_samples))
 
 
+    chords_time_series = chords_time_series.T
 
     if hparams.global_gain_scale > 0:
         wav *= hparams.global_gain_scale
