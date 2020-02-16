@@ -32,7 +32,7 @@ hparams = HParams(
     sample_rate=16000,
     # this is only valid for mulaw is True
     silence_threshold=2,
-    num_mels=80,
+    num_mels=12,
     fmin=125,
     fmax=7600,
     fft_size=1024,
@@ -65,14 +65,14 @@ hparams = HParams(
     kernel_size=3,
 
     # Local conditioning (set negative value to disable))
-    cin_channels=80,
+    cin_channels=12,
     cin_pad=2,
     # If True, use transposed convolutions to upsample conditional features,
     # otherwise repeat features to adjust time resolution
     upsample_conditional_features=True,
     upsample_net="ConvInUpsampleNetwork",
     upsample_params={
-        "upsample_scales": [4, 4, 4, 4],  # should np.prod(upsample_scales) == hop_size
+        "upsample_scales": [2, 2, 2, 2],  # should np.prod(upsample_scales) == hop_size
     },
 
     # Global conditioning (set negative value to disable)
@@ -88,7 +88,7 @@ hparams = HParams(
     # Loss
 
     # Training:
-    batch_size=2,
+    batch_size=4,
     optimizer="Adam",
     optimizer_params={
         "lr": 1e-3,
@@ -117,8 +117,8 @@ hparams = HParams(
 
     # Save
     # per-step intervals
-    checkpoint_interval=100000,
-    train_eval_interval=100000,
+    checkpoint_interval=5,
+    train_eval_interval=5,
     # per-epoch interval
     test_eval_epoch_interval=50,
     save_optimizer_state=True,
