@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-sonic-annotator -s vamp:nnls-chroma:chordino:chordnotes > chordnotes.n3
-
 sample=$1
 chord_dir=$2
 
