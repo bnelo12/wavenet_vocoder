@@ -11,6 +11,6 @@ sample_csv="$chord_dir"/"${sample_name%.*}".csv
 
 sonic-annotator -t chordnotes.n3 "$sample" -w csv 
 
-mv "${sample%.*}"_vamp_nnls-chroma_chordino_chordnotes.csv "$sample_csv"
+mv "${sample%.*}"_vamp_nnls-chroma_nnls-chroma_bothchroma.csv "$sample_csv"
 
 

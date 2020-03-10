@@ -248,7 +248,7 @@ if __name__ == "__main__":
             if has_ref_file:
                 ref = np.clip(ref, -1.0, 1.0)
 
-            wavfile.write(dst_wav_path, hparams.sample_rate, to_int16(gen))
+            wavfile.write(dst_wav_path, hparams.sample_rate, gen)
             if has_ref_file:
                 wavfile.write(target_wav_path, hparams.sample_rate, to_int16(ref))
 

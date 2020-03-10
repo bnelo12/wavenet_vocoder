@@ -72,7 +72,7 @@ def _process_song(out_dir, index, wav_path, text):
     # create xml file with notes and timestamps
     #subprocess.check_call(['./extract_chord_notes.sh', wav_path, chord_dir], shell=True)
     #os.system('./extract_chord_notes.sh {0} {1}'.format(pwav_path, chord_dir))
-    os.system('./extract_chord_notes.sh {0} {1} > /dev/null 2>&1'.format(pwav_path, chord_dir))
+    os.system('./extract_chromagram.sh {0} {1} > /dev/null 2>&1'.format(pwav_path, chord_dir))
 
 
     note_filename = '{0}/{1}.csv'.format(chord_dir, wav_name)
@@ -80,9 +80,9 @@ def _process_song(out_dir, index, wav_path, text):
     #### Instead of computing the Mel Spectrogram, here return a time series of one hot encoded chords.
     # vector with 1 in row for each note played
     # 1000 samples per second
-    note_samples = int((len(wav) / hparams.sample_rate) * 1000)
+    note_samples = int(len(wav)/2048)
     # 12 notes per octave
-    chords_time_series = np.zeros((12, note_samples))
+    chords_time_series = np.zeros((24, note_samples))
 
     #print(np.shape(chords_time_series))
 
@@ -90,21 +90,10 @@ def _process_song(out_dir, index, wav_path, text):
         #chordreader = csv.reader(csvfile, delimeter=',')
         chordreader = csvfile.readlines()
         #print(chordreader)
-        for row in chordreader:
+        for idx, row in enumerate(chordreader):
             row = row.split(",")
-            start_time = float(row[0])
-            end_time = float(row[1]) + start_time
-            note = int(row[2]) % 12
-            start_sample = min(note_samples-1, int(start_time * 1000))
-            end_sample = min(note_samples, int(end_time * 1000))
-            try:
-                chords_time_series[note][start_sample:end_sample]=1
-                # print('wav {0} start {1} end {2} note {3} num_notes {4}'.format(wav_name, start_sample, end_sample, note, note_samples))
-            except Exception as e:
-                print(np.shape(chords_time_series))
-                # print('wav {0} start {1} end {2} note {3} num_notes {4}'.format(wav_name, start_sample, end_sample, note, note_samples))
-
-
+            chromogram_samples = np.array(row).astype(np.float)[1:]
+            chords_time_series[:, idx] = chromogram_samples
     chords_time_series = chords_time_series.T
 
     # if hparams.global_gain_scale > 0:
@@ -146,7 +135,7 @@ def _process_song(out_dir, index, wav_path, text):
     np.save(os.path.join(out_dir, audio_filename),
             out.astype(out_dtype), allow_pickle=False)
     np.save(os.path.join(out_dir, chords_filename),
-            chords_time_series.astype(np.int16), allow_pickle=False)
+            chords_time_series.astype(out_dtype), allow_pickle=False)
 
     # Return a tuple describing this training example:
     return (audio_filename, chords_filename, N, text)

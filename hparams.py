@@ -18,7 +18,7 @@ hparams = HParams(
     # **NOTE**: if you change the one of the two parameters below, you need to
     # re-run preprocessing before training.
     input_type="raw",
-    quantize_channels=256,  # 65536 or 256
+    quantize_channels=65536,  # 65536 or 256
 
     # Audio:
     # time-domain pre/post-processing
@@ -65,7 +65,7 @@ hparams = HParams(
     kernel_size=3,
 
     # Local conditioning (set negative value to disable))
-    cin_channels=12,
+    cin_channels=-1,
     cin_pad=2,
     # If True, use transposed convolutions to upsample conditional features,
     # otherwise repeat features to adjust time resolution
