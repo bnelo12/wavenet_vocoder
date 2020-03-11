@@ -65,7 +65,7 @@ hparams = HParams(
     kernel_size=3,
 
     # Local conditioning (set negative value to disable))
-    cin_channels=-1,
+    cin_channels=24,
     cin_pad=2,
     # If True, use transposed convolutions to upsample conditional features,
     # otherwise repeat features to adjust time resolution
