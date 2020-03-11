@@ -117,8 +117,8 @@ hparams = HParams(
 
     # Save
     # per-step intervals
-    checkpoint_interval=5,
-    train_eval_interval=5,
+    checkpoint_interval=5000,
+    train_eval_interval=5000,
     # per-epoch interval
     test_eval_epoch_interval=50,
     save_optimizer_state=True,
