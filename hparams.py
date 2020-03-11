@@ -32,12 +32,12 @@ hparams = HParams(
     sample_rate=16000,
     # this is only valid for mulaw is True
     silence_threshold=2,
-    num_mels=12,
+    num_mels=24,
     fmin=125,
     fmax=7600,
     fft_size=1024,
     # shift can be specified by either hop_size or frame_shift_ms
-    hop_size=16,
+    hop_size=2048,
     frame_shift_ms=None,
     win_length=1024,
     win_length_ms=-1.0,
@@ -72,7 +72,7 @@ hparams = HParams(
     upsample_conditional_features=True,
     upsample_net="ConvInUpsampleNetwork",
     upsample_params={
-        "upsample_scales": [2, 2, 2, 2],  # should np.prod(upsample_scales) == hop_size
+        "upsample_scales": [4, 4, 8, 16],  # should np.prod(upsample_scales) == hop_size
     },
 
     # Global conditioning (set negative value to disable)
